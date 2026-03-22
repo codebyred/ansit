@@ -1,4 +1,11 @@
-# Why is it needed
-FFT requries infinite perodic signal in time domain
-But we can only take a portion from time domain.
-For periodic signal, we can put them side to side to make them look infinite as the edges fall to 0 and start from 0.
+# Why hanning window is needed in audio processing
+FFT assumes that a finite signal segment repeats periodically. But real audio signals are not periodic within that segment. 
+Spectral leakage happens because the FFT “wraps” the signal, and if the endpoints don’t match, it creates an artificial jump.
+
+That’s exactly why the Hann window is used:
+* It reduces the edge discontinuity
+* reduces leakage
+
+By touching zero at the endpoints of Hann window, it removes any discontinuities.
+
+There are also other windowing technique like Hamming window, blackman window

@@ -1,5 +1,6 @@
 use hound;
 use anyhow::{Context, Result};
+use std::f32::consts::PI;
 
 pub fn load_wav_file(path: &str) -> Result<(Vec<f32>, u32)> {
     let mut wavfile = hound::WavReader::open(path)   
@@ -27,4 +28,28 @@ pub fn framing(samples:&[f32], frame_size: usize, hop_size: usize) -> Vec<&[f32]
     println!("{:?}", frames);
 
     frames
+}
+
+pub fn hann_window(frames: &[&[f32]]) -> Vec<Vec<f32>> {
+    let mut hann_frames = Vec::new();
+
+    for &frame in frames {
+        if frame.len() <= 1 {
+            hann_frames.push(frame.to_vec());
+            continue;
+        }
+
+        let mut hann_frame = Vec::with_capacity(frame.len());
+        let n = frame.len() as f32;
+        let factor = 2.0 * PI / (n - 1.0);
+
+        for (i, &sample) in frame.iter().enumerate() {
+            let w = 0.5 * (1.0 - (factor * i as f32).cos());
+            hann_frame.push(sample * w);
+        }
+
+        hann_frames.push(hann_frame);
+    }
+
+    hann_frames
 }
